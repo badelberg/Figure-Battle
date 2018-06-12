@@ -185,7 +185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destinataion: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
+  Path: []
   moveSpeed: 1
   turnSpeed: 10
-  snapDistance: 0.5
+  snapDistance: 0.3
   targetAngle: 0

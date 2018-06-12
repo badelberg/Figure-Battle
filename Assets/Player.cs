@@ -5,7 +5,9 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     public Vector3 destinataion;
+    private int currentDst;
     public Vector3 moveDirection;
+    public List<Vector2> Path;
     private bool hasDestination;
     public float moveSpeed = 1.0f;
     public float turnSpeed = 10.0f;
@@ -24,7 +26,14 @@ public class Player : MonoBehaviour {
             if ((currentPosition - destinataion).magnitude < snapDistance)
             {
                 transform.position = destinataion;
-                hasDestination = false;
+                if (++currentDst < Path.Count)
+                {
+                    destinataion = new Vector3(Path[currentDst].x, currentPosition.y, Path[currentDst].y);
+                    moveDirection = destinataion - currentPosition;
+                    moveDirection.Normalize();
+                }
+                else
+                    hasDestination = false;
             }
             else
             {
@@ -41,10 +50,12 @@ public class Player : MonoBehaviour {
 
     }
 
-    public void MoveTo( float x, float z)
+    public void MoveTo(List<Vector2> path)
     {
         Vector3 currentPosition = transform.position;
-        destinataion = new Vector3(x, currentPosition.y, z);
+        currentDst = 0;
+        Path = path;
+        destinataion = new Vector3(Path[0].x, currentPosition.y, Path[0].y);
         hasDestination = true;
         moveDirection = destinataion - currentPosition;
         moveDirection.Normalize();
