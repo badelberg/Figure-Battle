@@ -8,12 +8,18 @@ using Model.Events;
 using System;
 using DDModel.Events;
 using UnityEngine.UI;
+using DDModel.Rule;
 
 public class GameController : MonoBehaviour {
 
-    public GameObject selectedObject;
+    public Text Pane;
+    public Texture koboldTexture;
+    private GameObject selectedObject;
     private string selectedName;
     public GameObject combatant;
+    public GameObject ring;
+    public GameObject arrow;
+    public float cameraSpeed;
     public float gridWidth;
     public float gridHeight;
     public float offsetX;
@@ -21,33 +27,47 @@ public class GameController : MonoBehaviour {
     public RawImage frame;
     public Canvas canvas;
     public Texture hiliteTexture;
+    public Texture nonHiliteTexture;
     private Dictionary<string, GameObject> combatants;
     private Dictionary<string, RawImage> icons;
+    public bool bAnimating = false;
+    
 
     // Use this for initialization
     private Model.State state;
-    DDModel.Entities.InititativeQueue initiative;
+    DDModel.Rule.Commands commands = new DDModel.Rule.Commands();
     void Start() {
+        Combatant combatant;
         state = new State("test");
         state.Map = new Map(40, 40);
-        initiative = state.AddObject<DDModel.Entities.InititativeQueue>(0,0);
         combatants = new Dictionary<string, GameObject>();
-        AddCombatent("Rouge", 0, 0, 8, 6, 12, Combatant.FacingDirection.South);
-        AddCombatent("Knight", 1, 0, 12, 6, 13, Combatant.FacingDirection.South);
-        AddCombatent( "Wizard", 2, 0, 6, 6, 10, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Rouge", "Heros", 15, 14, 9, 6, 14, Combatant.FacingDirection.South);
+        AttackStats stats = new AttackStats { AttackBonus = 5, BonusDmg = 3, DiceDamage = 1, DiceType = 6, Reach = 80 };
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Short Bow", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Knight", "Heros", 14, 15, 11, 6, 18, Combatant.FacingDirection.North);
+        stats = new AttackStats { AttackBonus = 5, BonusDmg = 3, DiceDamage = 1, DiceType = 10, Reach = 1 };
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Long Sword", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Wizard", "Heros", 14, 14, 7, 6, 12, Combatant.FacingDirection.North);
+        stats = new AttackStats { AttackBonus = 5, BonusDmg = 3, DiceDamage = 1, DiceType = 10, Reach = 120 };
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Fire Bolt", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 14, 22, 5, 6, 12, Combatant.FacingDirection.North);
+        stats = new AttackStats { AttackBonus = 4, BonusDmg = 2, DiceDamage = 1, DiceType = 4, Reach = 1 };
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 15, 22, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 16, 22, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 14, 23, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 15, 23, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 16, 23, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
         icons = new Dictionary<string, RawImage>();
-        initiative.StartGameTurn(state);
+        commands.StartTurn(state);
  
     }
 
-    private void AddCombatent(string type, int x, int y, int hp, int move, int ac, Combatant.FacingDirection facing)
-    {
-        Combatant combatent = state.AddObject<Combatant>(x, y);
-        combatent.SetIcon(state, type);
-        combatent.SetFacing(state, facing);
-        combatent.SetStats(state, hp, move, ac);
-        this.initiative.AddCombatant(combatent.Name);
-    }
     IEnumerator GetRequest(string uri)
     {
         UnityWebRequest request = UnityWebRequest.Get(uri);
@@ -60,13 +80,29 @@ public class GameController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        foreach (GameEvent gameEvent in state.GameEvents.Queue)
+
+        GameEvent gameEvent;
+        while (!bAnimating && state.GameEvents.GetEvent(out gameEvent))
         {
             HandleEvents(gameEvent);
         }
-        state.GameEvents.Queue.Clear();
 
         HandleMouseClick();
+        HandleKeyBoard();
+    }
+
+    private void HandleKeyBoard()
+    {
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+        Camera.main.transform.position = new Vector3(
+            Camera.main.transform.position.x + moveHorizontal * cameraSpeed,
+            Camera.main.transform.position.y,
+            Camera.main.transform.position.z + moveVertical * cameraSpeed);
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            commands.EndTurn(state);
+        }
     }
 
     private void HandleMouseClick()
@@ -78,18 +114,24 @@ public class GameController : MonoBehaviour {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out raycastHit))
             { // create ray from screen's mouse position to world and store info in raycastHit object
                 if (raycastHit.collider.gameObject.tag == "Player")
-                    objectHit = true;
+                {
+                    string currentCombatant = commands.GetCurrentComabatant();
+                    string target = raycastHit.collider.gameObject.name;
+                    Debug.Log(string.Format("Assign Action Target {0}  {1}", currentCombatant, target));
+                    if(commands.AssignActionTarget(state, currentCombatant, target))
+                        commands.EndTurn(state);
+
+                }
                 else if (raycastHit.collider.gameObject.tag == "Map" && selectedObject != null)
                 {
-                    
+
                     int x;
                     int y;
                     ScreenToLogical(raycastHit.point.x, raycastHit.point.z, out x, out y);
                     Combatant combatant = state.GetObject<Combatant>(this.selectedName);
                     Debug.Log(string.Format("Executing Move Action start {0},{1} to {2}, {3}", combatant.LocationX, combatant.LocationY, x, y));
-                    state.AssignAction<DDModel.Actions.Move>(this.selectedName, x, y);
-                    state.ExectuteActions();
-                    Debug.Log(string.Format("Event Queue Cnt {0}", state.GameEvents.Queue.Count)); 
+                    if(commands.AssignActionLocation(state, commands.GetCurrentComabatant(), x, y,true))
+                        commands.EndTurn(state);
                 }
             }
 
@@ -107,6 +149,9 @@ public class GameController : MonoBehaviour {
             case "Create":
                 HandleCreateEvent(gameEvent as CreateEvent);
                 break;
+            case "Attack":
+                HandleAttackEvent(gameEvent as AttackEvent);
+                break;
             case "SetIcon":
                 HandleSetIcon(gameEvent as SetIconEvent);
                 break;
@@ -119,9 +164,128 @@ public class GameController : MonoBehaviour {
             case "Move":
                 HandleMove(gameEvent as MoveEvent);
                 break;
+            case "SetFacing":
+                HandleSetFacing(gameEvent as SetFacingEvent);
+                break;
+
+            case "SetCondition":
+                HandleSetCondition((gameEvent as SetConditionEvent));
+                break;
             case "Error":
                 HandleError(gameEvent as ErrorEvent);
                 break;
+        }
+    }
+
+    private void HandleSetFacing(SetFacingEvent setFacingEvent)
+    {
+        float YEular = 0;
+        GameObject combatant;
+        if (combatants.TryGetValue(setFacingEvent.Name, out combatant))
+        {
+            switch (setFacingEvent.Facing)
+            {
+                case "North":
+                    YEular = 0;
+                    break;
+                case "South":
+                    YEular = 180;
+                    break;
+                case "East":
+                    YEular = 90;
+                    break;
+                case "West":
+                    YEular = 270;
+                    break;
+                case "NorthEast":
+                    YEular = 45;
+                    break;
+                case "NorthWest":
+                    YEular = 315;
+                    break;
+                case "SouthEast":
+                    break;
+                case "SouthWest":
+                    YEular = 225;
+                    break;
+            }
+            Debug.Log(string.Format("Setting Facing of {0} to {1}:{2}", setFacingEvent.Name, setFacingEvent.Facing, YEular));
+            Vector3 eular = combatant.transform.rotation.eulerAngles;
+            eular.y = YEular;
+            combatant.transform.rotation = Quaternion.Euler( eular);
+        }
+    }
+
+    private void HandleSetCondition(SetConditionEvent setConditionEvent)
+    {
+        switch(setConditionEvent.Condition)
+        {
+            case "Unconscious":
+                SetCombatantUnconscious(setConditionEvent.Name);
+                break;
+        }
+    }
+
+    private void SetCombatantUnconscious(string name)
+    {
+        GameObject combatant;
+        if(combatants.TryGetValue(name, out combatant))
+        {
+            Vector3 eularAngles = combatant.transform.rotation.eulerAngles;
+            combatant.transform.rotation = Quaternion.Euler(
+                0,
+                eularAngles.y,
+                eularAngles.z);
+            combatant.transform.position = new Vector3(
+                combatant.transform.position.x,
+                -0.44f,
+                combatant.transform.position.z);
+        }
+    }
+
+    private void HandleAttackEvent(AttackEvent attackEvent)
+    {
+        
+        if (attackEvent.Preview)
+        {
+            Debug.Log("Attack Event Preview");
+        }
+        else
+        {
+            Debug.Log("Attack Event");
+            string message = string.Empty;
+            foreach (string line in attackEvent.Results)
+            {
+                message += line + "\r\n";
+            }
+            Pane.text = message;
+            SetAttackCamera(attackEvent.Name, attackEvent.Target);
+        }
+    }
+
+    private void SetAttackCamera(string name, string targetName)
+    {
+        GameObject combatant;
+        GameObject target;
+        if(combatants.TryGetValue(name, out combatant) && combatants.TryGetValue(targetName, out target))
+        {
+            Vector3 dif = target.transform.position - combatant.transform.position;
+            Vector3 mid = (dif)/2 + combatant.transform.position;
+            mid.y = 2f;
+            Vector3 offset =  Quaternion.Euler(0, 90, 0)* dif;
+            Camera.main.transform.position = mid + offset;
+            Camera.main.transform.LookAt(mid);
+            GameObject arrowObj = Instantiate(arrow);
+            ShootArrow shootArrow = arrowObj.GetComponent<ShootArrow>();
+            int x, z;
+            ScreenToLogical(combatant.transform.position.x, combatant.transform.position.z, out x, out z);
+            shootArrow.startX = x;
+            shootArrow.startY = z;
+            ScreenToLogical(target.transform.position.x, target.transform.position.z, out x, out z);
+            shootArrow.targetX = x;
+            shootArrow.targetY = z;
+
+            bAnimating = true;
         }
     }
 
@@ -133,7 +297,7 @@ public class GameController : MonoBehaviour {
     private void HandleMove(MoveEvent moveEvent)
     {
         GameObject playerObject;
-        if (combatants.TryGetValue(moveEvent.Name, out playerObject))
+        if (!moveEvent.Preview && combatants.TryGetValue(moveEvent.Name, out playerObject))
         {
 
             Player player = playerObject.GetComponent<Player>();
@@ -155,18 +319,36 @@ public class GameController : MonoBehaviour {
     {
         GameObject combatent = null;
         RawImage frame = null;
+        if(selectedObject != null && icons.TryGetValue(selectedName, out frame))
+        {
+            frame.texture = nonHiliteTexture;
+            GameObject ring = selectedObject.transform.Find("Ring(Clone)").gameObject;
+            Destroy(ring);
+        }
         Debug.Log(string.Format("Current Player is {0}", currentPlayerEvent.Name));
         if (combatants.TryGetValue(currentPlayerEvent.Name, out combatant))
         {
             Debug.Log(string.Format("Setting selected Object"));
             this.selectedObject = combatant;
             this.selectedName = currentPlayerEvent.Name;
+            Instantiate(ring, combatant.transform);
+            SetFollowCamera(combatant);
         }
         if(icons.TryGetValue(currentPlayerEvent.Name, out frame))
         {
             Debug.Log(string.Format("Hiliting Frame"));
             frame.texture = hiliteTexture;
         }
+    }
+
+    private void SetFollowCamera(GameObject combatant)
+    {
+        float x = combatant.transform.position.x + 3;
+        float y = Camera.main.transform.position.y;
+        float z = combatant.transform.position.z +10;
+        Camera.main.transform.position = new Vector3(x, y, z);
+        Camera.main.transform.LookAt(combatant.transform);
+
     }
 
     private void HandleSetStats(SetStatsEvent setStatsEvent)
@@ -212,14 +394,33 @@ public class GameController : MonoBehaviour {
         GetIconOffset(icon, ref x, ref y, ref xBack, ref yBack);
         Debug.Log(string.Format("tranform child cnt {0}", gameObject.transform.childCount));
         GameObject childObject = gameObject.transform.GetChild(0).gameObject;
+        if (icon.Contains("Kolbold"))
+        {
+            SetTexture(gameObject, koboldTexture, 0.47f);
+            SetTexture(childObject, koboldTexture, -0.47f);
+        }
         SetMaterialOffset(gameObject, x, y);
         SetMaterialOffset(childObject, xBack, yBack);
+    }
+
+    private void SetTexture(GameObject gameObject, Texture koboldTexture, float yOffset)
+    {
+        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        Material material = meshRenderer.materials[0];
+        material.mainTexture = koboldTexture;
+        material.mainTextureScale = new Vector2(0.07f, yOffset);
     }
 
     private static void GetIconOffset(string icon, ref float x, ref float y, ref float xBack, ref float yBack)
     {
         switch (icon)
         {
+            case "Kolbold1":
+                x = 0.0f;
+                y = 0.0f;
+                xBack = 0.01f;
+                yBack = -0.01f;
+                break;
             case "Rouge":
                 x = 0.01f;
                 y = 0.0f;
@@ -266,6 +467,11 @@ public class GameController : MonoBehaviour {
             float xBack = 0.01f, yBack = 0.0f;
             GetIconOffset(icon, ref x, ref y, ref xBack, ref yBack);
             Material material = Instantiate(iconImage.material);
+            if (icon.Contains("Kolbold"))
+            { 
+                material.mainTexture = koboldTexture;
+                material.mainTextureScale = new Vector2(0.07f, 0.47f);
+            }
             material.mainTextureOffset = new Vector2(x, y);
             iconImage.material = material;
         }
@@ -290,13 +496,13 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private void LogicalToScreen(int x, int y, out float screenX, out float screenY)
+    public void LogicalToScreen(int x, int y, out float screenX, out float screenY)
     {
         screenX = (x * gridWidth + gridWidth / 2) + offsetX;
         screenY = (y * gridHeight + gridHeight / 2) + offsetY;
     }
 
-    private void ScreenToLogical(float screenX, float screenY, out int x, out int y)
+    public void ScreenToLogical(float screenX, float screenY, out int x, out int y)
     {
         x = Mathf.FloorToInt((screenX - offsetX) / gridWidth);
         y = Mathf.FloorToInt((screenY - offsetY) / gridHeight);
@@ -308,6 +514,7 @@ public class GameController : MonoBehaviour {
         LogicalToScreen(x, y, out gridX, out gridY);
 
         GameObject newGameObject = Instantiate(combatant, new Vector3(gridX, 0, gridY), Quaternion.Euler(90, 0, 0));
+        newGameObject.name = name;
         combatants[name] = newGameObject;
         AddUI(name, combatants.Count);
     }

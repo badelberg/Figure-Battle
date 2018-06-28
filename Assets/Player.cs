@@ -8,6 +8,7 @@ public class Player : MonoBehaviour {
     private int currentDst;
     public Vector3 moveDirection;
     public List<Vector2> Path;
+    private GameController gameControler;
     private bool hasDestination;
     public float moveSpeed = 1.0f;
     public float turnSpeed = 10.0f;
@@ -15,7 +16,9 @@ public class Player : MonoBehaviour {
     public float targetAngle;
     // Use this for initialization
     void Start () {
-		
+        GameObject gameControlerObj = GameObject.FindWithTag("GameController");
+        if (gameControlerObj != null)
+            gameControler = gameControlerObj.GetComponent<GameController>();
 	}
 	
 	// Update is called once per frame
@@ -33,7 +36,10 @@ public class Player : MonoBehaviour {
                     moveDirection.Normalize();
                 }
                 else
+                { 
                     hasDestination = false;
+                    gameControler.bAnimating = false;
+                }
             }
             else
             {
@@ -59,5 +65,6 @@ public class Player : MonoBehaviour {
         hasDestination = true;
         moveDirection = destinataion - currentPosition;
         moveDirection.Normalize();
+        gameControler.bAnimating = true;
     }
 }
