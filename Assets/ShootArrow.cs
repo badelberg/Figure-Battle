@@ -64,7 +64,7 @@ public class ShootArrow : MonoBehaviour {
             if (accumulatedTime >= AnimaitonTime)
             {
                 gameControler.bAnimating = false;
-                Destroy(this);
+                Destroy(this.gameObject);
             }
         }
     }

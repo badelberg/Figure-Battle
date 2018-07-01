@@ -63,7 +63,9 @@
     <Compile Include="Assets\KeyBoardController.cs" />
     <Compile Include="Assets\Player.cs" />
     <Compile Include="Assets\ShootArrow.cs" />
+    <Compile Include="Assets\Slash.cs" />
     <None Include="Assets\Material\$self_illuminated_outlined_diffuse_113.shader" />
+    <None Include="Assets\MedievalTownExteriors\Readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/madel/Documents/Source/Games/FigureBattle/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

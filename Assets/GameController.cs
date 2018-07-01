@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour {
     public GameObject combatant;
     public GameObject ring;
     public GameObject arrow;
+    public GameObject slash;
     public float cameraSpeed;
     public float gridWidth;
     public float gridHeight;
@@ -41,7 +42,7 @@ public class GameController : MonoBehaviour {
         state = new State("test");
         state.Map = new Map(40, 40);
         combatants = new Dictionary<string, GameObject>();
-        combatant = commands.AddCombatent(state, "Rouge", "Heros", 15, 14, 9, 6, 14, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Rouge", "Heros", 15, 14, 9, 6, 14, Combatant.FacingDirection.North);
         AttackStats stats = new AttackStats { AttackBonus = 5, BonusDmg = 3, DiceDamage = 1, DiceType = 6, Reach = 80 };
         combatant.SetReadyAction(new AttackReadyAction { Name = "Short Bow", AttackStats = stats }, true);
         combatant = commands.AddCombatent(state, "Knight", "Heros", 14, 15, 11, 6, 18, Combatant.FacingDirection.North);
@@ -50,18 +51,18 @@ public class GameController : MonoBehaviour {
         combatant = commands.AddCombatent(state, "Wizard", "Heros", 14, 14, 7, 6, 12, Combatant.FacingDirection.North);
         stats = new AttackStats { AttackBonus = 5, BonusDmg = 3, DiceDamage = 1, DiceType = 10, Reach = 120 };
         combatant.SetReadyAction(new AttackReadyAction { Name = "Fire Bolt", AttackStats = stats }, true);
-        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 14, 22, 5, 6, 12, Combatant.FacingDirection.North);
+        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 14, 22, 5, 6, 12, Combatant.FacingDirection.South);
         stats = new AttackStats { AttackBonus = 4, BonusDmg = 2, DiceDamage = 1, DiceType = 4, Reach = 1 };
         combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
-        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 15, 22, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Kolbold2", "Monsters", 15, 21, 5, 6, 12, Combatant.FacingDirection.South);
         combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
-        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 16, 22, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Kolbold3", "Monsters", 16, 22, 5, 6, 12, Combatant.FacingDirection.South);
         combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
-        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 14, 23, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Kolbold4", "Monsters", 13, 23, 5, 6, 12, Combatant.FacingDirection.South);
         combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
-        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 15, 23, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Kolbold5", "Monsters", 15, 23, 5, 6, 12, Combatant.FacingDirection.South);
         combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
-        combatant = commands.AddCombatent(state, "Kolbold1", "Monsters", 16, 23, 5, 6, 12, Combatant.FacingDirection.South);
+        combatant = commands.AddCombatent(state, "Kolbold6", "Monsters", 17, 23, 5, 6, 12, Combatant.FacingDirection.South);
         combatant.SetReadyAction(new AttackReadyAction { Name = "Dagger", AttackStats = stats }, true);
         icons = new Dictionary<string, RawImage>();
         commands.StartTurn(state);
@@ -110,12 +111,28 @@ public class GameController : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         { // if LMB clicked
             bool objectHit = false;
-            RaycastHit raycastHit = new RaycastHit(); // create new raycast hit info object
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out raycastHit))
+            float lastHit = float.MaxValue;
+            string currentCombatant = commands.GetCurrentComabatant();
+            RaycastHit[] raycastHits = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition));
+            RaycastHit raycastHit = new RaycastHit();
+            if (raycastHits.Length > 0)
+            {
+                foreach(RaycastHit hit in raycastHits)
+                {
+                    if (hit.collider.gameObject.name != currentCombatant && hit.distance < lastHit)
+                    {
+                        lastHit = hit.distance;
+                        raycastHit = hit;
+                        objectHit = true;
+                        Debug.Log(string.Format("Clicked {0} hit count {1}", hit.collider.gameObject.name, raycastHits.Length));
+                        
+                    }
+                }
+            }
+            if (objectHit)
             { // create ray from screen's mouse position to world and store info in raycastHit object
                 if (raycastHit.collider.gameObject.tag == "Player")
                 {
-                    string currentCombatant = commands.GetCurrentComabatant();
                     string target = raycastHit.collider.gameObject.name;
                     Debug.Log(string.Format("Assign Action Target {0}  {1}", currentCombatant, target));
                     if(commands.AssignActionTarget(state, currentCombatant, target))
@@ -231,15 +248,18 @@ public class GameController : MonoBehaviour {
         GameObject combatant;
         if(combatants.TryGetValue(name, out combatant))
         {
-            Vector3 eularAngles = combatant.transform.rotation.eulerAngles;
-            combatant.transform.rotation = Quaternion.Euler(
-                0,
-                eularAngles.y,
-                eularAngles.z);
-            combatant.transform.position = new Vector3(
-                combatant.transform.position.x,
-                -0.44f,
-                combatant.transform.position.z);
+            Player player = combatant.GetComponent<Player>();
+            player.SetDying();
+            SetFollowCamera(combatant);
+            //Vector3 eularAngles = combatant.transform.rotation.eulerAngles;
+            //combatant.transform.rotation = Quaternion.Euler(
+            //    0,
+            //    eularAngles.y,
+            //    eularAngles.z);
+            //combatant.transform.position = new Vector3(
+            //    combatant.transform.position.x,
+            //    -0.44f,
+            //    combatant.transform.position.z);
         }
     }
 
@@ -270,23 +290,47 @@ public class GameController : MonoBehaviour {
         if(combatants.TryGetValue(name, out combatant) && combatants.TryGetValue(targetName, out target))
         {
             Vector3 dif = target.transform.position - combatant.transform.position;
-            Vector3 mid = (dif)/2 + combatant.transform.position;
-            mid.y = 2f;
-            Vector3 offset =  Quaternion.Euler(0, 90, 0)* dif;
+            Vector3 mid = (dif) / 2 + combatant.transform.position;
+           
+            Vector3 offset = Quaternion.Euler(0, 90, 0) * dif;
+            if (dif.magnitude >= gridWidth * 2)
+            {
+                offset = Quaternion.Euler(0, 90, 0) * dif;
+                mid.y = Math.Min( 2f, dif.magnitude/ (gridWidth * 2));
+                CreateArrowAnimation(combatant, target, dif);
+            }
+            else
+            {
+                offset = Quaternion.Euler(0, 90, 0) * (dif.normalized * gridWidth *3);
+                mid.y = 0.8f;
+                CreateSlashAnimation(combatant, target, dif);
+            }
             Camera.main.transform.position = mid + offset;
             Camera.main.transform.LookAt(mid);
-            GameObject arrowObj = Instantiate(arrow);
-            ShootArrow shootArrow = arrowObj.GetComponent<ShootArrow>();
-            int x, z;
-            ScreenToLogical(combatant.transform.position.x, combatant.transform.position.z, out x, out z);
-            shootArrow.startX = x;
-            shootArrow.startY = z;
-            ScreenToLogical(target.transform.position.x, target.transform.position.z, out x, out z);
-            shootArrow.targetX = x;
-            shootArrow.targetY = z;
-
             bAnimating = true;
         }
+    }
+    private void CreateSlashAnimation(GameObject combatant, GameObject target, Vector3 dif)
+    {
+        GameObject slashObj = Instantiate(slash);
+        Quaternion facing = combatant.transform.rotation;
+        Vector3 offset = new Vector3(0, 0, gridWidth/2);
+        Vector3 voffset = new Vector3(0, 0.3f, 0);
+        slashObj.transform.position = combatant.transform.position + (facing*offset)+ voffset;
+        slashObj.transform.rotation = Quaternion.Euler(0, combatant.transform.rotation.eulerAngles.y - 90, 0);
+    }
+    private void CreateArrowAnimation(GameObject combatant, GameObject target, Vector3 dif)
+    {
+
+        GameObject arrowObj = Instantiate(arrow);
+        ShootArrow shootArrow = arrowObj.GetComponent<ShootArrow>();
+        int x, z;
+        ScreenToLogical(combatant.transform.position.x, combatant.transform.position.z, out x, out z);
+        shootArrow.startX = x;
+        shootArrow.startY = z;
+        ScreenToLogical(target.transform.position.x, target.transform.position.z, out x, out z);
+        shootArrow.targetX = x;
+        shootArrow.targetY = z;
     }
 
     private void HandleError(ErrorEvent errorEvent)
@@ -341,12 +385,32 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private void SetFollowCamera(GameObject combatant)
+    public void SetFollowCamera(GameObject combatant)
     {
         float x = combatant.transform.position.x + 3;
         float y = Camera.main.transform.position.y;
         float z = combatant.transform.position.z +10;
-        Camera.main.transform.position = new Vector3(x, y, z);
+        Vector3 dif = new Vector3(0, 0, gridWidth * 3);
+        //Debug.Log(string.Format("Current Player z rot {0} {1} {2}", 
+        //    combatant.transform.rotation.eulerAngles.x,
+        //    combatant.transform.rotation.eulerAngles.y,
+        //    combatant.transform.rotation.eulerAngles.z
+        //    ));
+        Vector3 offset = Quaternion.Euler(0, combatant.transform.rotation.eulerAngles.y+180, 0) * dif;
+        offset.y = 1;
+        //Debug.Log(string.Format("dif {0} {1} {2}",
+        //   dif.x,
+        //   dif.y,
+        //   dif.z
+        //    ));
+        //Debug.Log(string.Format("offset {0} {1} {2}",
+        //   offset.x,
+        //   offset.y,
+        //   offset.z
+        //    ));
+
+
+        Camera.main.transform.position = combatant.transform.position+offset;
         Camera.main.transform.LookAt(combatant.transform);
 
     }
@@ -419,6 +483,36 @@ public class GameController : MonoBehaviour {
                 x = 0.0f;
                 y = 0.0f;
                 xBack = 0.01f;
+                yBack = -0.01f;
+                break;
+            case "Kolbold2":
+                x = 0.076f;
+                y = 0.0f;
+                xBack = 0.076f;
+                yBack = -0.01f;
+                break;
+            case "Kolbold3":
+                x = 0.15f;
+                y = 0.0f;
+                xBack = 0.15f;
+                yBack = -0.01f;
+                break;
+            case "Kolbold4":
+                x = 0.225f;
+                y = 0.0f;
+                xBack = 0.225f;
+                yBack = -0.01f;
+                break;
+            case "Kolbold5":
+                x = 0.3f;
+                y = 0.0f;
+                xBack = 0.3f;
+                yBack = -0.01f;
+                break;
+            case "Kolbold6":
+                x = 0.38f;
+                y = 0.0f;
+                xBack = 0.38f;
                 yBack = -0.01f;
                 break;
             case "Rouge":
