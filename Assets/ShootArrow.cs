@@ -37,8 +37,10 @@ public class ShootArrow : MonoBehaviour {
         gameControler.LogicalToScreen(targetX, targetY, out x, out z);
         target = new Vector3(x, this.transform.position.y, z);
         targetRot = Quaternion.Euler(curRot.x+20, curRot.y, 0);
-        mid = (target - start)/2 + start;
-        mid.y += 1;
+        Vector3 diff = (target - start) / 2;
+        mid = diff + start;
+        if(diff.magnitude > 2*gameControler.gridWidth)
+            mid.y += 1;
         midRot = Quaternion.Euler(90, curRot.y, 0);
 
 

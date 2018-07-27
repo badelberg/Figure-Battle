@@ -54,7 +54,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   accumulatedTime: 0
-  AnimaitonTime: 1.3
+  AnimaitonTime: 1.2
 --- !u!198 &198684504232872386
 ParticleSystem:
   m_ObjectHideFlags: 1

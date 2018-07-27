@@ -8,6 +8,7 @@ TagManager:
   - HP
   - AC
   - Move
+  - UI
   layers:
   - Default
   - TransparentFX

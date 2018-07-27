@@ -1,0 +1,343 @@
+{
+  "Objects": {
+    "Combatant1": {
+      "HP": 9,
+      "Move": 6,
+      "AC": 14,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Heros",
+      "HasReaction": true,
+      "Facing": "North",
+      "Icon": "Rouge",
+      "ReadyActions": {
+        "Short Bow": {
+          "AttackStats": {
+            "AttackBonus": 5,
+            "Reach": 80,
+            "DiceDamage": 1,
+            "DiceType": 6,
+            "BonusDmg": 3,
+            "AttackType": "Ranged"
+          },
+          "Name": "Short Bow",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Short Bow",
+      "LocationX": 15,
+      "LocationY": 14,
+      "Name": "Combatant1",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant2": {
+      "HP": 11,
+      "Move": 6,
+      "AC": 18,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Heros",
+      "HasReaction": true,
+      "Facing": "North",
+      "Icon": "Knight",
+      "ReadyActions": {
+        "Long Sword": {
+          "AttackStats": {
+            "AttackBonus": 5,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 10,
+            "BonusDmg": 3,
+            "AttackType": "Melee"
+          },
+          "Name": "Long Sword",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Long Sword",
+      "LocationX": 14,
+      "LocationY": 15,
+      "Name": "Combatant2",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant3": {
+      "HP": 7,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Heros",
+      "HasReaction": true,
+      "Facing": "North",
+      "Icon": "Wizard",
+      "ReadyActions": {
+        "Fire Bolt": {
+          "AttackStats": {
+            "AttackBonus": 5,
+            "Reach": 120,
+            "DiceDamage": 1,
+            "DiceType": 10,
+            "BonusDmg": 3,
+            "AttackType": "Bolt"
+          },
+          "Name": "Fire Bolt",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Fire Bolt",
+      "LocationX": 14,
+      "LocationY": 14,
+      "Name": "Combatant3",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant4": {
+      "HP": 5,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Monsters",
+      "HasReaction": true,
+      "Facing": "South",
+      "Icon": "Kolbold1",
+      "ReadyActions": {
+        "Dagger": {
+          "AttackStats": {
+            "AttackBonus": 4,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 4,
+            "BonusDmg": 2,
+            "AttackType": "Melee"
+          },
+          "Name": "Dagger",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Dagger",
+      "LocationX": 14,
+      "LocationY": 22,
+      "Name": "Combatant4",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant5": {
+      "HP": 5,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Monsters",
+      "HasReaction": true,
+      "Facing": "South",
+      "Icon": "Kolbold2",
+      "ReadyActions": {
+        "Dagger": {
+          "AttackStats": {
+            "AttackBonus": 4,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 4,
+            "BonusDmg": 2,
+            "AttackType": "Melee"
+          },
+          "Name": "Dagger",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Dagger",
+      "LocationX": 15,
+      "LocationY": 21,
+      "Name": "Combatant5",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant6": {
+      "HP": 5,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Monsters",
+      "HasReaction": true,
+      "Facing": "South",
+      "Icon": "Kolbold3",
+      "ReadyActions": {
+        "Dagger": {
+          "AttackStats": {
+            "AttackBonus": 4,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 4,
+            "BonusDmg": 2,
+            "AttackType": "Melee"
+          },
+          "Name": "Dagger",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Dagger",
+      "LocationX": 16,
+      "LocationY": 22,
+      "Name": "Combatant6",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant7": {
+      "HP": 5,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Monsters",
+      "HasReaction": true,
+      "Facing": "South",
+      "Icon": "Kolbold4",
+      "ReadyActions": {
+        "Dagger": {
+          "AttackStats": {
+            "AttackBonus": 4,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 4,
+            "BonusDmg": 2,
+            "AttackType": "Melee"
+          },
+          "Name": "Dagger",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Dagger",
+      "LocationX": 13,
+      "LocationY": 23,
+      "Name": "Combatant7",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant8": {
+      "HP": 5,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Monsters",
+      "HasReaction": true,
+      "Facing": "South",
+      "Icon": "Kolbold5",
+      "ReadyActions": {
+        "Dagger": {
+          "AttackStats": {
+            "AttackBonus": 4,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 4,
+            "BonusDmg": 2,
+            "AttackType": "Melee"
+          },
+          "Name": "Dagger",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Dagger",
+      "LocationX": 15,
+      "LocationY": 23,
+      "Name": "Combatant8",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    },
+    "Combatant9": {
+      "HP": 5,
+      "Move": 6,
+      "AC": 12,
+      "Conditions": {},
+      "ClassName": "Combatant",
+      "GridPoints": [
+        {
+          "Item1": 0,
+          "Item2": 0
+        }
+      ],
+      "Group": "Monsters",
+      "HasReaction": true,
+      "Facing": "South",
+      "Icon": "Kolbold6",
+      "ReadyActions": {
+        "Dagger": {
+          "AttackStats": {
+            "AttackBonus": 4,
+            "Reach": 1,
+            "DiceDamage": 1,
+            "DiceType": 4,
+            "BonusDmg": 2,
+            "AttackType": "Melee"
+          },
+          "Name": "Dagger",
+          "Type": "Attack"
+        }
+      },
+      "DefaultAction": "Dagger",
+      "LocationX": 17,
+      "LocationY": 23,
+      "Name": "Combatant9",
+      "TypeString": "DDModel.Combatant",
+      "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    }
+  },
+  "GameEvents": {},
+  "Resources": { "resourceValues": {} },
+  "ClassName": null,
+  "Name": "test",
+  "TypeString": "Model.State",
+  "AssemblyString": "Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+}

@@ -1,0 +1,37 @@
+{
+  "HP": 9,
+  "Move": 6,
+  "AC": 14,
+  "Conditions": {},
+  "ClassName": "Combatant",
+  "GridPoints": [
+    {
+      "Item1": 0,
+      "Item2": 0
+    }
+  ],
+  "Group": "Heros",
+  "HasReaction": true,
+  "Facing": "North",
+  "Icon": "Rouge",
+  "ReadyActions": {
+    "Short Bow": {
+      "AttackStats": {
+        "AttackBonus": 5,
+        "Reach": 80,
+        "DiceDamage": 1,
+        "DiceType": 6,
+        "BonusDmg": 3,
+        "AttackType": "Ranged"
+      },
+      "Name": "Short Bow",
+      "Type": "Attack"
+    }
+  },
+  "DefaultAction": "Short Bow",
+  "LocationX": 15,
+  "LocationY": 14,
+  "Name": "Combatant10",
+  "TypeString": "DDModel.Combatant",
+  "AssemblyString": "DDModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+}
